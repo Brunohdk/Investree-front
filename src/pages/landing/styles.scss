@@ -1,0 +1,74 @@
+@import "../../assets/styles/styles.scss";
+
+#page-landing {
+    height: 100vh;
+    background-image: url('../../assets/images/home/landing/background3.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    .content {
+        height: 100%;
+        width: 100%;
+        padding: 65px;
+        
+        .card {
+            background-color: $bg-default;
+            background-image: url('../../assets/images/home/landing/wave.svg');
+            background-repeat: no-repeat;
+            height: 100%;
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 0 15px 15px rgba(0, 0, 0, 0.4);
+            padding: 40px;
+
+            header {
+                display: flex;
+                align-items: center;
+                padding: 20px 0;
+
+                .investree-logo {
+                    width: 30px;
+                    height: 30px;
+                    margin-right: 5px;
+                }
+            }
+    
+            main {
+                height: auto;
+                width: 100%;
+                display: flex;
+                align-items: center;
+    
+                .apresentation-text {
+                    width: 50%;
+    
+                    h1 {
+                        font-size: 46px;
+                        padding-bottom: 30px;
+                    }
+    
+                    p {
+                        font-size: 20px;
+                    }
+                }
+    
+                .apresentation-image {
+                    display: flex;
+                    width: 50%;
+                    
+                    .logo {
+                        width: 500px;
+                        height: auto;
+                        margin: 0 auto;
+                    }
+    
+                    .icon-money {
+                        width: 35px;
+                        height: 35px;
+                    }
+                }
+            }
+        }
+
+    }
+}
