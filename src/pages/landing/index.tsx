@@ -7,31 +7,48 @@ export default function Landing() {
     return (
         <div id="page-landing">
             <div className="content">
-                <header>
-                    <h4>
-                        Investree
-                    </h4>
-                </header>
-                <main>
-                    <div className="apresentation-text">
-                        <h1>
-                            Ajudando você a controlar melhor seus investimentos!
-                        </h1>
-                        <p>
-                            Controle total e em tempo real de todos os seus ativos e sua carteira.
-                        </p>
-                        <Link to="/home">
-                        
-                        </Link>
-                    </div>
-                    <div className="apresentation-image">
+                <div className="card">
+                    <header>
                         <img 
-                            src={require('../../assets/images/home/landing/landingPage.svg')} 
-                            alt="Logo" 
-                            className="logo"
+                            className="investree-logo"
+                            src={require('../../assets/images/icons/investree.svg')} 
+                            alt="Investree"
                         />
-                    </div>
-                </main>
+                        <h4>
+                            Investree
+                        </h4>
+                    </header>
+                    <main>
+                        <div className="apresentation-text">
+                            <h1>
+                                Financial control in a easy way
+                            </h1>
+                            <p>
+                                Total and real-time control of all financial assets in your portfolio.
+                            </p>
+                            <Link to="/home">
+                            
+                            </Link>
+                        </div>
+                        <div className="apresentation-image">
+                            <img 
+                                className="logo"
+                                src={require('../../assets/images/home/landing/landingPage.svg')} 
+                                alt="Logo" 
+                            />
+                            {/* <img 
+                                className="icon-money"
+                                src={require('../../assets/images/icons/money-bag.svg')} 
+                                alt="$"
+                            />
+                            <img 
+                                className="icon-money"
+                                src={require('../../assets/images/icons/money-circle.svg')} 
+                                alt="$"
+                            /> */}
+                        </div>
+                    </main>
+                </div>
             </div>
         </div>
     )
