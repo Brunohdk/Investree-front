@@ -2,7 +2,7 @@
 
 #page-landing {
     height: 100vh;
-    background-image: url('../../assets/images/home/landing/background3.jpg');
+    background-image: url('../../assets/images/home/landing/background.jpg');
     background-repeat: no-repeat;
     background-size: cover;
 
@@ -42,13 +42,55 @@
                 .apresentation-text {
                     width: 50%;
     
-                    h1 {
+                    .title {
                         font-size: 46px;
                         padding-bottom: 30px;
                     }
     
-                    p {
+                    .description {
                         font-size: 20px;
+                    }
+
+                    .btn-link {
+                        display: flex;
+                        align-items: center;
+                        border: 2px solid $color-system-medium;
+                        padding: 6px 16px;
+                        margin-top: 15px;
+                        width: fit-content;
+                        border-radius: 5px;
+                        background-color: $color-system-medium;
+                        color: $text-color-white;
+                    
+                    
+                        span {
+                            display: flex;
+                            align-items: center;
+                            margin-right: 15px;
+                            opacity: 0.8;
+                    
+                            svg {
+                                width: 20px;
+                                height: 20px;
+                            }
+                        }
+                    
+                        p {
+                            margin: 0;
+                            font-size: 22px;
+                        }
+                    
+                        &:hover {
+                            cursor: pointer;
+                        }
+                    }
+
+                    .icon-money {
+                        width: 35px;
+                        height: 35px;
+                        position: relative;
+                        top: 70px;
+                        left: 100px;
                     }
                 }
     
@@ -69,6 +111,5 @@
                 }
             }
         }
-
     }
 }
