@@ -1,6 +1,8 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { FiLogIn } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
+import Button from '../../components/common/Button'
 import './styles.scss'
 
 export default function Landing() {
@@ -20,15 +22,33 @@ export default function Landing() {
                     </header>
                     <main>
                         <div className="apresentation-text">
-                            <h1>
+                            <h1 className="title">
                                 Financial control in a easy way
                             </h1>
-                            <p>
+                            <p className="description">
                                 Total and real-time control of all financial assets in your portfolio.
                             </p>
-                            <Link to="/home">
-                            
+                            <Link
+                                to='/home'
+                                className='btn-link'
+                            >
+                                <span>
+                                    <FiLogIn />
+                                </span>
+                                <p>
+                                    Let's start
+                                </p>
                             </Link>
+                            <img 
+                                className="icon-money"
+                                src={require('../../assets/images/icons/money-bag.svg')} 
+                                alt="$"
+                            />
+                            {/* <img 
+                                className="icon-money"
+                                src={require('../../assets/images/icons/money-circle.svg')} 
+                                alt="$"
+                            /> */}
                         </div>
                         <div className="apresentation-image">
                             <img 
@@ -36,16 +56,6 @@ export default function Landing() {
                                 src={require('../../assets/images/home/landing/landingPage.svg')} 
                                 alt="Logo" 
                             />
-                            {/* <img 
-                                className="icon-money"
-                                src={require('../../assets/images/icons/money-bag.svg')} 
-                                alt="$"
-                            />
-                            <img 
-                                className="icon-money"
-                                src={require('../../assets/images/icons/money-circle.svg')} 
-                                alt="$"
-                            /> */}
                         </div>
                     </main>
                 </div>
