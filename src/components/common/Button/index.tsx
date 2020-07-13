@@ -13,10 +13,7 @@ type size = "small" | "medium" | "big"
 
 export default function Button({ icon, children, size, outline }: Button) {
     return (
-        <button 
-            id="button-component" 
-            className={`${size && size} ${outline && 'outline'}`}
-        >
+        <button className={`button_component ${size && `button_component--${size}`} ${outline && 'button_component--outline'}`}>
             {icon &&
                 <span>
                     {icon()}

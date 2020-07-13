@@ -1,3 +1,51 @@
-#home {
-    
+@import "../../assets/styles/styles.scss";
+
+.home {
+    .home-header {
+        margin: -10px;
+        padding: 10px 15px;
+        height: 50px;
+        border-radius: 5px 5px 0 0;
+        box-shadow: 0 8px 20px 0px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .add-button-wrapper {
+            display: flex;
+            align-items: center;
+
+            p {
+                margin: 0 8px 0 0;
+                font-size: 18px;
+            }
+
+            span {
+                display: flex;
+
+                svg {
+                    color: $color-system-medium;
+                }
+                &:hover {
+
+                    cursor: pointer;
+
+                    svg {
+                        color: $color-system-heavy;
+                    }
+                }
+            }
+        }
+
+        .filter-button {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    .home-main {
+        padding: 10px 15px;
+    }
 }

@@ -21,3 +21,28 @@ h1, h2, h3, h4, h5, h6 {
     color: $text-color-heavy;
 }
 
+#investree-layout {
+    .wrapper-layout {
+        background-color: $bg-default;
+        min-height: 100vh;
+
+        .content-container-layout {
+            padding: 15px;
+
+            .card-layout {
+                min-height: calc(100vh - 95px);
+                background-color: white;
+                border-radius: 5px;
+                padding: 10px;
+            }
+
+            @media (min-width: 1200px) {
+                width: 1200px;
+                margin: 0 auto;
+
+                padding: 15px 0;
+            }
+        }
+    }
+}
+
