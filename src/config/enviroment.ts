@@ -1,4 +1,11 @@
-const enviroment = {
+interface Enviroment {
+    apiURL: {
+        investree: string
+    }
+    homeURL: string
+}
+
+const enviroment:Enviroment = {
     apiURL: {
         investree: 'http://localhost:9001/'
     },
