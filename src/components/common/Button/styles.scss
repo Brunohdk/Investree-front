@@ -1,6 +1,6 @@
 @import "../../../assets/styles/variables/styles.scss";
 
-#button-component {
+.button_component {
     display: flex;
     align-items: center;
     border: 2px solid $color-system-medium;
@@ -31,54 +31,55 @@
     &:hover {
         cursor: pointer;
     }
-}
 
-//outline
-
-.outline {
-    background-color: #ffffff !important;
-    color: $color-system-medium !important;
-    border: 2px solid $color-system-medium !important;
-
-    p {
-        font-weight: 500 !important;
-    }
-
-    &:hover {
-        background-color: $color-system-medium !important;
+    //outline
+    
+    &--outline {
+        background-color: #ffffff !important;
+        color: $color-system-medium !important;
         border: 2px solid $color-system-medium !important;
-        color: #ffffff !important
-    }
-}
-
-
-//sizes
-.small {
-    padding: 4px 10px !important;
-
-    span svg {
-            width: 12px !important;
-            height: 12px !important;
+    
+        p {
+            font-weight: 500 !important;
         }
-
-    p {
-        font-size: 14px !important;
-    }
-}
-
-.big {
-    padding: 6px 16px !important;
-
-    span {
-        margin-right: 15px !important;
-
-        svg {
-            width: 20px !important;
-            height: 20px !important;
+    
+        &:hover {
+            background-color: $color-system-medium !important;
+            border: 2px solid $color-system-medium !important;
+            color: #ffffff !important
         }
     }
-
-    p {
-        font-size: 22px !important;
+    
+    //sizes
+    
+    &--small {
+        padding: 4px 10px !important;
+    
+        span svg {
+                width: 12px !important;
+                height: 12px !important;
+            }
+    
+        p {
+            font-size: 14px !important;
+        }
+    }
+    
+    &--big {
+        padding: 6px 16px !important;
+    
+        span {
+            margin-right: 15px !important;
+    
+            svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+        }
+    
+        p {
+            font-size: 22px !important;
+        }
     }
 }
+
