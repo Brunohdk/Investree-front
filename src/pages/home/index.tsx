@@ -1,24 +1,25 @@
 import React, { useState, ReactNode } from 'react'
+import { useHistory } from 'react-router-dom'
 import { BsFillPlusCircleFill } from 'react-icons/bs'
 import { GrSearch } from 'react-icons/gr'
 import { Table, Tag, Space } from 'antd';
 
 import Form from '../../components/crud/Form'
-import { useTheme } from '../../store'
 import './styles.scss'
-import { number } from 'prop-types';
+
 
 interface FormSettings {
-    inputs: {
-        name: string
-        label: string
-        type: string
-        inputType?: string
-        size: number
-        default: string
-        required: boolean
-        replace?: any
-    }[]
+  entityPath: string
+  inputs: {
+      name: string
+      label: string
+      type: string
+      inputType?: string
+      size: number
+      default: string
+      required: boolean
+      replace?: any
+  }[]
 }
 
 interface Columns {
@@ -100,36 +101,37 @@ const data: Data[] = [
 ]
 
 const formSettings: FormSettings = {
+  entityPath: 'asset',
   inputs: [
     {
+        type: 'select',
       name: 'asset',
       label: 'Asset',
-      type: 'input',
       size: 6,
       default: '',
       required: true
     },
     {
+        type: 'input',
       name: 'amount',
       label: 'Amount',
-      type: 'input',
       size: 6,
       default: '',
       required: true
     },
     {
+        type: 'input',
       name: 'value',
       label: 'Value',
-      type: 'input',
       inputType: 'number',
       size: 6,
       default: '',
       required: true
     },
     {
+        type: 'input',
       name: 'date',
       label: 'Date',
-      type: 'input',
       size: 6,
       default: '',
       required: true
@@ -138,7 +140,10 @@ const formSettings: FormSettings = {
 }
 
 export default function Home() {
+
   const [ toggleForm, setToggleForm ] = useState(false)
+
+  const history = useHistory()
     
     return (
         <div className="home">
@@ -160,7 +165,11 @@ export default function Home() {
                     </div>
                 </header>
                 <main>
-                    <Form settings={formSettings}/>
+                    <Form 
+                      settings={formSettings}
+                      setToggleForm={setToggleForm}
+                      history={history}
+                    />
                 </main>
             </>
           :

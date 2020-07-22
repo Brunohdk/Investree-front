@@ -5,7 +5,7 @@ import api from '../../../services/api'
 import Label from '../../common/Label'
 import { enviroment } from '../../../config/enviroment'
 
-export default function CrudForm({ settings }) {
+export default function CrudForm({ settings, setToggleForm, history }) {
     let defaultValue = {}
         settings.inputs.forEach(input => defaultValue[input.name] = input.default)
 
@@ -14,8 +14,10 @@ export default function CrudForm({ settings }) {
     function handleSubmit(e) {
         e.preventDefault()
         
-        api.post('/asset', formData)
-            .then(resp => console.log('ok'))
+        api.post(`/${settings.entityPath}`, formData)
+            .then(resp => {
+                actionClear()
+            })
             .then(err => console.log(err))
     }
 
@@ -23,6 +25,12 @@ export default function CrudForm({ settings }) {
         const { name, value } = e.target
 
         setFormData(prevState => ({...prevState, [name]: value}))
+    }
+
+    function actionClear() {
+        setToggleForm(false)
+        setFormData(defaultValue)
+        history.push('/')
     }
 
     return (
