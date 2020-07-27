@@ -10,7 +10,7 @@ const routes = [
     //landing
     {exact: true, path: '/landing', name: 'Landing Page', component: Landing},
     //home
-    {exact: true, path: '/', name: 'Home', component: Home},
+    {exact: true, path: '/:query?', name: 'Home', component: Home},
     //error
     {exact: true, path: '/error', name: 'Error', component: ErrorPage}
 ]
