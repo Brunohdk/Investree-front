@@ -2,114 +2,16 @@ import React, { useState, ReactNode } from 'react'
 import { useHistory } from 'react-router-dom'
 import { BsFillPlusCircleFill } from 'react-icons/bs'
 import { GrSearch } from 'react-icons/gr'
-import { Table, Tag, Space } from 'antd';
+import { Tag, Space } from 'antd';
 
+import Table from '../../components/crud/Table'
 import Form from '../../components/crud/Form'
 import './styles.scss'
 
 
-interface FormSettings {
-    module: string
-    entityPath: string
-    inputs: {
-        name: string
-        label: string
-        type: string
-        inputType?: string
-        size: number
-        default: any
-        required: boolean
-        replace?: any
-        dataSource?: {
-            module: string
-            entityPath: string
-        }
-        fieldKey?: {
-            name: string
-            value: string
-        }
-    }[]
-}
 
-interface Columns {
-    title: string
-    dataIndex: string
-    key: string
-    render?: (a: any) => ReactNode
-}
 
-interface Data {
-    key: string
-    name: string
-    age: number
-    address: string
-    tags?: string[]
-}
-
-const columns: Columns[] = [
-    {
-        title: 'Name',
-        dataIndex: 'name',
-        key: 'name',
-        render: text => <a>{text}</a>,
-    },
-    {
-        title: 'Age',
-        dataIndex: 'age',
-        key: 'age',
-    },
-    {
-        title: 'Address',
-        dataIndex: 'address',
-        key: 'address',
-    },
-    {
-        title: 'Tags',
-        key: 'tags',
-        dataIndex: 'tags',
-        render: tags => (
-            <>
-                {tags.map((tag: any) => {
-                let color = tag.length > 5 ? 'geekblue' : 'green';
-                if (tag === 'loser') {
-                    color = 'volcano';
-                }
-                return (
-                    <Tag color={color} key={tag}>
-                    {tag.toUpperCase()}
-                    </Tag>
-                );
-                })}
-            </>
-        ),
-    }
-]
-
-const data: Data[] = [
-    {
-        key: '1',
-        name: 'John Brown',
-        age: 32,
-        address: 'New York No. 1 Lake Park',
-        tags: ['nice', 'developer'],
-    },
-    {
-        key: '2',
-        name: 'Jim Green',
-        age: 42,
-        address: 'London No. 1 Lake Park',
-        tags: ['loser'],
-    },
-    {
-        key: '3',
-        name: 'Joe Black',
-        age: 32,
-        address: 'Sidney No. 1 Lake Park',
-        tags: ['cool', 'teacher'],
-    },
-]
-
-const formSettings: FormSettings = {
+const formSettings= {
     module: 'investree',
     entityPath: 'operation',
     inputs: [
@@ -157,7 +59,34 @@ const formSettings: FormSettings = {
     ]
 }
 
-export default function Home({ match }: {match: any}) {
+const tableSettings = {
+    module: 'investree',
+    entityPath: 'operation',
+    buttons: {
+        delete: true,
+        update: true
+    },
+    columns: [
+        {
+            name: 'Asset',
+            data: 'asset'
+        },
+        {
+            name: 'Amount',
+            data: 'amount'
+        },
+        {
+            name: 'Value',
+            data: 'value'
+        },
+        {
+            name: 'Date',
+            data: 'date'
+        },
+    ]
+}
+
+export default function Home({ match }) {
 
   const [ toggleForm, setToggleForm ] = useState(false)
 
@@ -209,7 +138,11 @@ export default function Home({ match }: {match: any}) {
                     </div>
                 </header>
                 <main className="home-main">
-                    <Table columns={columns} dataSource={data} />
+                    <Table 
+                        settings={tableSettings}
+                        history={history}
+                        match={match}
+                    />
                 </main>
             </>
           }
