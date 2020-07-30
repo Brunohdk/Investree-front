@@ -22,9 +22,6 @@ export default function CrudForm({ settings, setToggleForm, history, match }) {
 
     function save(data) {
 		setLoadingActionRequest(true)
-		console.log(`${enviroment.apiURL[settings.module]}${settings.entityPath}`)
-		console.log(settings.entityPath)
-		console.log(enviroment.apiURL[settings.module])
 
         const request = api.post(`${enviroment.apiURL[settings.module]}${settings.entityPath}`, data)
         
@@ -314,7 +311,6 @@ export default function CrudForm({ settings, setToggleForm, history, match }) {
                                 />
                             </>
                         }
-						{console.log(formData)}
 						{input.type === 'calendar' && 
 							<>
 								<Label text={input.label}/>

@@ -3,6 +3,7 @@ interface Enviroment {
         investree: string
     }
     homeURL: string
+
 }
 
 const enviroment:Enviroment = {
