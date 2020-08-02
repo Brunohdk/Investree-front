@@ -1,4 +1,5 @@
 import React, { useState, useEffect, ReactNode } from 'react'
+import { BsTrash, BsPencil } from 'react-icons/bs'
 
 import api from '../../../services/api'
 import enviroment from '../../../config/enviroment'
@@ -21,10 +22,8 @@ interface TableColumn {
 }
 
 interface TableButtons {
-    delete: boolean
-    deleteValidation?: boolean
-    update: boolean
-    updateValidation?: boolean
+    deleteValidation?: () => boolean
+    updateValidation?: () => boolean
 }
 
 export default function CrudTable({ settings, history, match }: {settings:TableSettings, history: any, match: any}) {
@@ -38,7 +37,6 @@ export default function CrudTable({ settings, history, match }: {settings:TableS
 
         request.then(response => {
             setData(response.data)
-            console.log(response)
 			setLoading(false)
 		})
 		.catch(error => {
@@ -72,18 +70,40 @@ export default function CrudTable({ settings, history, match }: {settings:TableS
                     <tbody>
                         {data.map((row, indexRow) =>
                             <tr key={indexRow}>
-                                <td>
-                                    
+                                <td className="d-flex justify-center">
+                                    {settings.buttons.updateValidation ? 
+                                        settings.buttons.updateValidation() &&
+                                            <BsPencil 
+                                                className="crudTable__icons"
+                                                size={16}
+                                                onClick={() => history.push(`/${row['_id']}`)}
+                                            />
+                                    :
+                                        <BsPencil 
+                                            size={16}
+                                        />
+                                    }
+                                    {settings.buttons.deleteValidation ? 
+                                        settings.buttons.deleteValidation() &&
+                                            <BsTrash 
+                                                className="crudTable__icons"
+                                                size={16}
+                                            />
+                                    :
+                                        <BsTrash 
+                                            size={16}
+                                        />
+                                    }
                                 </td>
-                                    {settings.columns.map((field, index) =>
-                                        <td key={index}>
-                                            {field.replace ? 
-                                                field.replace(row)
-                                            :
-                                                row[field.data]
-                                            }
-                                        </td>
-                                    )}
+                                {settings.columns.map((field, index) =>
+                                    <td key={index}>
+                                        {field.replace ? 
+                                            field.replace(row)
+                                        :
+                                            row[field.data]
+                                        }
+                                    </td>
+                                )}
                             </tr>
                         )}
                     </tbody>

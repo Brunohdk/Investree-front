@@ -1,14 +1,12 @@
-import React, { useState, ReactNode } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { BsFillPlusCircleFill } from 'react-icons/bs'
 import { GrSearch } from 'react-icons/gr'
-import { Tag, Space } from 'antd';
+import { format, addHours } from 'date-fns'
 
 import Table from '../../components/crud/Table'
 import Form from '../../components/crud/Form'
 import './styles.scss'
-
-
 
 
 const formSettings= {
@@ -63,8 +61,8 @@ const tableSettings = {
     module: 'investree',
     entityPath: 'operation',
     buttons: {
-        delete: true,
-        update: true
+        deleteValidation: () => true,
+        updateValidation: () => true
     },
     columns: [
         {
@@ -81,7 +79,8 @@ const tableSettings = {
         },
         {
             name: 'Date',
-            data: 'date'
+            data: 'date',
+            replace: obj => format(addHours(new Date(obj.date), 3), 'dd/MM/yyyy HH:mm')
         },
     ]
 }
@@ -91,6 +90,19 @@ export default function Home({ match }) {
   const [ toggleForm, setToggleForm ] = useState(false)
 
   const history = useHistory()
+
+  function originPath() {
+    let originPath = (match.path).split('/')
+    originPath.pop()
+
+    return history.push(`${originPath.join('/')}`)
+}
+
+  useEffect(() => {
+      if(match.params.query) {
+          setToggleForm(true)
+      }
+  }, [match.params.query])
     
     return (
         <div className="home">
@@ -101,9 +113,13 @@ export default function Home({ match }) {
                         <p className="title">
                             Back
                         </p>
-                        <span onClick={() => setToggleForm(false)}>
-                            <BsFillPlusCircleFill size={24}/>
-                        </span>
+                        <BsFillPlusCircleFill 
+                            onClick={() => {
+                                setToggleForm(false)
+                                originPath()
+                            }}
+                            size={24}
+                        />
                     </div>
                     <div className="filter-button">
                     <span>
@@ -127,9 +143,10 @@ export default function Home({ match }) {
                         <p className="title">
                             Add
                         </p>
-                        <span onClick={() => setToggleForm(true)}>
-                            <BsFillPlusCircleFill size={24}/>
-                        </span>
+                        <BsFillPlusCircleFill 
+                            size={24}
+                            onClick={() => setToggleForm(true)}
+                        />
                     </div>
                     <div className="filter-button">
                     <span>

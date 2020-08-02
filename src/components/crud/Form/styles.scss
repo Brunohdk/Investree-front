@@ -1,0 +1,10 @@
+.crudForm {
+    &__loadingBtn {
+        &:hover {
+            background-color: #ffffff;
+            color: #4288BD;
+            border: 2px solid #4288BD;
+            cursor: not-allowed;
+        }
+    }
+}

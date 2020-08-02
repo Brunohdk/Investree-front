@@ -4,23 +4,30 @@ import './styles.scss'
 
 interface Button {
     icon?: Function
-    children: string
+    title: string
     size?: size
     outline?: Boolean
+    onClick?: () => void
+    disabled?: boolean
+    className?: string
 }
 
 type size = "small" | "medium" | "big"
 
-export default function Button({ icon, children, size, outline }: Button) {
+export default function Button({ icon, title, size, outline, onClick, disabled, className= '' }: Button) {
     return (
-        <button className={`button_component ${size && `button_component--${size}`} ${outline && 'button_component--outline'}`}>
+        <button 
+            className={`button_component ${className} ${size && `button_component--${size}`} ${outline && 'button_component--outline'}`}
+            onClick={onClick}
+            disabled={disabled ? disabled : false}
+        >
             {icon &&
-                <span>
+                <span style={{marginRight: title && 10}}>
                     {icon()}
                 </span>
             }
             <p>
-                {children}
+                {title}
             </p>
         </button>
     )

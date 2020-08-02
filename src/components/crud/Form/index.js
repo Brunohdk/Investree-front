@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Row, Col, Input } from 'antd'
+import { Row, Col, Input, Spin } from 'antd'
 import objectPath from 'object-path'
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 
+import Button from '../../../components/common/Button'
 import Select from 'react-select'
 import api from '../../../services/api'
 import Label from '../../common/Label'
@@ -52,8 +53,9 @@ export default function CrudForm({ settings, setToggleForm, history, match }) {
 		const request = api.get(`${enviroment.apiURL[settings.module]}${settings.entityPath}/${id}`)
 
 		request.then(response => {
-			const data = response.data.data
-			setFormData(prevState => ({...prevState, ...data}))
+			const data = response.data
+
+			setFormData(data)
 			setLoadingData(false)
 		})
 		.catch(error => {
@@ -255,19 +257,23 @@ export default function CrudForm({ settings, setToggleForm, history, match }) {
 	}
 	
 	useEffect(() => {
-		setTimeout(() => {
 			if(match.params.query)
 				listUnique(match.params.query)
-
-			if(settings.inputs.filter(input => input.dataSource).length === 0)
+			
+			let inputDataSourceArr = settings.inputs.filter(input => input.dataSource)
+			if(inputDataSourceArr.length === 0) {
 				setLoadingData(false)
+			} else {
+				inputDataSourceArr.forEach(input => list(input.dataSource))
+			}
 
-			settings.inputs.forEach(input => input.dataSource && list(input.dataSource))
-		}, 0)
 	}, [])
 
     return (
-        <form onSubmit={handleSubmit}>
+		<form 
+			onSubmit={handleSubmit}
+			className="crudForm"
+		>
             <Row gutter={16}>
                 {settings.inputs.map((input, index) => 
                     <Col
@@ -315,7 +321,8 @@ export default function CrudForm({ settings, setToggleForm, history, match }) {
 							<>
 								<Label text={input.label}/>
 								<DatePicker 
-									selected={formData[input.name] || ''}
+									dateFormat='dd/MM/yyyy'
+									selected={new Date(formData[input.name]) || ''}
 									onChange={date => setFormData(prevState => ({...prevState, [input.name]: date}))}
 								/>
 							</>
@@ -323,9 +330,20 @@ export default function CrudForm({ settings, setToggleForm, history, match }) {
                     </Col>
                 )}
             </Row>
-            <button onClick={e => handleSubmit(e)}>
-                teste
-            </button>
+			{loadingActionRequest ?
+				<Button 
+					className="crudForm__loadingBtn"
+					disabled
+					outline
+					icon={() => <Spin /> }
+				/>
+			:
+				<Button 
+					onClick={e => handleSubmit(e)}
+					title='Save'
+					size='small'
+				/>
+			}
         </form>
     )  
 }
