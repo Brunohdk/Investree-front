@@ -31,7 +31,7 @@ h1, h2, h3, h4, h5, h6 {
 
             .card-layout {
                 min-height: calc(100vh - 95px);
-                background-color: white;
+                background-color: $bg-dark-medium;
                 border-radius: 5px;
                 padding: 10px;
             }

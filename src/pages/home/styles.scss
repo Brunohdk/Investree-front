@@ -22,20 +22,9 @@
                 font-size: 18px;
             }
 
-            span {
-                display: flex;
-
-                svg {
-                    color: $color-system-medium;
-                }
-                &:hover {
-
-                    cursor: pointer;
-
-                    svg {
-                        color: $color-system-heavy;
-                    }
-                }
+            svg {
+                color: $color-system-medium;
+                cursor: pointer;
             }
         }
 

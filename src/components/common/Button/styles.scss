@@ -14,7 +14,7 @@
     span {
         display: flex;
         align-items: center;
-        margin-right: 10px;
+        justify-content: center;
         opacity: 0.8;
 
         svg {
@@ -32,53 +32,59 @@
         cursor: pointer;
     }
 
+    &:focus {
+        outline: none;
+    }
+
     //outline
-    
     &--outline {
-        background-color: #ffffff !important;
-        color: $color-system-medium !important;
-        border: 2px solid $color-system-medium !important;
+        background-color: #ffffff;
+        color: $color-system-medium;
+        border: 2px solid $color-system-medium;
     
         p {
-            font-weight: 500 !important;
+            font-weight: 500;
         }
     
         &:hover {
-            background-color: $color-system-medium !important;
-            border: 2px solid $color-system-medium !important;
-            color: #ffffff !important
+            background-color: $color-system-medium;
+            border: 2px solid $color-system-medium;
+            color: #ffffff
+        }
+
+        &:focus {
+            outline: none;
         }
     }
     
     //sizes
-    
     &--small {
-        padding: 4px 10px !important;
+        padding: 4px 10px;
     
         span svg {
-                width: 12px !important;
-                height: 12px !important;
+                width: 12px;
+                height: 12px;
             }
     
         p {
-            font-size: 14px !important;
+            font-size: 14px;
         }
     }
     
     &--big {
-        padding: 6px 16px !important;
+        padding: 6px 16px;
     
         span {
-            margin-right: 15px !important;
+            margin-right: 15px;
     
             svg {
-                width: 20px !important;
-                height: 20px !important;
+                width: 20px;
+                height: 20px;
             }
         }
     
         p {
-            font-size: 22px !important;
+            font-size: 22px;
         }
     }
 }
