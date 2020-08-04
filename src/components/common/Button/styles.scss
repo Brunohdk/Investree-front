@@ -25,7 +25,7 @@
 
     p {
         margin: 0;
-        font-size: 18px;
+        font-size: 16px;
     }
 
     &:hover {
@@ -56,6 +56,17 @@
             outline: none;
         }
     }
+
+    &--link {
+        background-color: transparent;
+        border: none;
+        color: $color-system-medium;
+
+        &:hover {
+            opacity: 0.7;
+            transition: all 0.3s ease-in-out;
+        }
+    }
     
     //sizes
     &--small {
@@ -84,7 +95,7 @@
         }
     
         p {
-            font-size: 22px;
+            font-size: 18px;
         }
     }
 }

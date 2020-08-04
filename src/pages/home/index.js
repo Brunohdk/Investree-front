@@ -4,8 +4,8 @@ import { BsFillPlusCircleFill } from 'react-icons/bs'
 import { GrSearch } from 'react-icons/gr'
 import { format, addHours } from 'date-fns'
 
+import Form from '../../components/pages/home'
 import Table from '../../components/crud/Table'
-import Form from '../../components/crud/Form'
 import './styles.scss'
 
 
@@ -28,6 +28,29 @@ const formSettings= {
                 entityPath: 'asset'
             },
             required: true
+        },
+        {
+            type: 'select',
+            name: 'moreThanOneOrder',
+            label: 'More than one order?',
+            size: 6,
+            default: false,
+            fieldKey: {
+                value: 'value',
+                name: 'name'
+            },
+            data: [
+                {
+                    name: 'Yes',
+                    value: true
+                },
+                {
+                    name: 'No',
+                    value: false
+                }
+            ],
+            required: false,
+            excludeBeforePost: true,
         },
         {
             type: 'input',
@@ -71,17 +94,22 @@ const tableSettings = {
         },
         {
             name: 'Amount',
-            data: 'amount'
+            data: 'amountTotal'
         },
         {
-            name: 'Value',
-            data: 'value'
+            name: 'Average Price',
+            data: 'valueAverage'
         },
         {
-            name: 'Date',
-            data: 'date',
-            replace: obj => format(addHours(new Date(obj.date), 3), 'dd/MM/yyyy HH:mm')
+            name: 'Started Position In',
+            data: 'startedPositionIn',
+            replace: obj => format(addHours(new Date(obj.startedPositionIn), 3), 'dd/MM/yyyy HH:mm')
         },
+        {
+            name: 'createdAt',
+            data: 'createdAt',
+            replace: obj => format(addHours(new Date(obj.createdAt), 3), 'dd/MM/yyyy HH:mm')
+        }
     ]
 }
 
@@ -129,7 +157,6 @@ export default function Home({ match }) {
                 </header>
                 <main>
                     <Form 
-                      settings={formSettings}
                       setToggleForm={setToggleForm}
                       history={history}
                       match={match}

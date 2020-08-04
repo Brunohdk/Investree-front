@@ -113,7 +113,7 @@ export default function CrudForm({ settings, setToggleForm, history, match }) {
 	
 	function handleformDataValidated() {
 		settings.inputs.forEach(input => {
-			if(input.dataHidden)
+			if(input.excludeBeforePost)
 				delete formData[input.name]
 			if(input.replace)
 				formData[input.name] = formData[input.name] && input.replace(formData[input.name])
@@ -330,20 +330,28 @@ export default function CrudForm({ settings, setToggleForm, history, match }) {
                     </Col>
                 )}
             </Row>
-			{loadingActionRequest ?
+			<div className="crudForm__btnGroup">
+				{loadingActionRequest ?
+					<Button 
+						className="crudForm__btnGroup--loadingBtn"
+						disabled
+						outline
+						icon={() => <Spin /> }
+					/>
+				:
+					<Button 
+						title='Save'
+						size='small'
+						onClick={e => handleSubmit(e)}
+					/>
+				}
 				<Button 
-					className="crudForm__loadingBtn"
-					disabled
-					outline
-					icon={() => <Spin /> }
-				/>
-			:
-				<Button 
-					onClick={e => handleSubmit(e)}
-					title='Save'
+					title='Cancel'
 					size='small'
+					link
+					onClick={() => clearRequest()}
 				/>
-			}
+			</div>
         </form>
     )  
 }
