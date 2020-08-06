@@ -1,5 +1,31 @@
 .homeForm {
 
+    &__btnOrders {
+        height: fit-content;
+        display: flex;
+        margin: 20px 0 0 10px;
+    }
+
+    &__table {
+        table {
+            thead {
+                tr {
+                    th {
+
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    td {
+                        
+                    }
+                }
+            }
+        }
+    }
+
     &__btnGroup {
         display: flex;
         align-items: center;

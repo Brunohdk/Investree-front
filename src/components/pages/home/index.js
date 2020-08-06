@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Row, Col, Input, Spin } from 'antd'
+import { BsTrash } from 'react-icons/bs'
+import { format, addHours } from 'date-fns'
 import objectPath from 'object-path'
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
@@ -11,62 +13,64 @@ import Label from '../../common/Label'
 import enviroment from '../../../config/enviroment'
 import './styles.scss'
 
+const settings= {
+	module: 'investree',
+	entityPath: 'operation',
+	inputs: [
+
+		{
+			type: 'input',
+			name: 'amount',
+			label: 'Amount',
+			size: 6,
+			default: '',
+			required: true
+		},
+		{
+			type: 'input',
+			name: 'value',
+			label: 'Value',
+			inputType: 'number',
+			size: 6,
+			default: '',
+			required: true
+		},
+		{
+			type: 'calendar',
+			name: 'date',
+			label: 'Date',
+			size: 6,
+			default: new Date(),
+			required: true
+		}
+	]
+}
+
+const formDefaultValue = {
+	asset: '',
+	bought: []
+}
+
+const subformDefaultValue = {
+	amount: '',
+	value: '',
+	date: new Date()
+}
+
+const assetObjFormat = {
+	name: 'asset',
+	fieldKey: {
+		value: 'name',
+		name: 'name'
+	},
+	dataSource: {
+		module: 'investree',
+		entityPath: 'asset'
+	},
+}
+
 export default function HomeForm({ setToggleForm, history, match }) {
-    const settings= {
-        module: 'investree',
-        entityPath: 'operation',
-        inputs: [
 
-            {
-                type: 'input',
-                name: 'amount',
-                label: 'Amount',
-                size: 6,
-                default: '',
-                required: true
-            },
-            {
-                type: 'input',
-                name: 'value',
-                label: 'Value',
-                inputType: 'number',
-                size: 6,
-                default: '',
-                required: true
-            },
-            {
-                type: 'calendar',
-                name: 'date',
-                label: 'Date',
-                size: 6,
-                default: new Date(),
-                required: true
-            }
-        ]
-    }
-
-	let formDefaultValue = {
-		asset: '',
-		bought: []
-	}
-
-	let subformDefaultValue = {
-		amount: '',
-		value: '',
-		date: new Date()
-	}
-
-	const assetObjFormat = {
-		name: 'asset',
-		fieldKey: {
-			value: 'name',
-			name: 'name'
-		},
-		dataSource: {
-			module: 'investree',
-			entityPath: 'asset'
-		},
-	}
 
 	const [ dataListEntities, setDataListEntities ] = useState([])
 	const [ formData, setFormData ] = useState(formDefaultValue)    
@@ -82,9 +86,13 @@ export default function HomeForm({ setToggleForm, history, match }) {
         const request = api.post(`${enviroment.apiURL[settings.module]}${settings.entityPath}`, data)
         
         request.then(resp => {
-            clearRequest()
+			clearRequest()
+			setLoadingActionRequest(false)
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+			console.log(err)
+			setLoadingActionRequest(false)
+		})
     }
 
 	function update(data) {
@@ -109,7 +117,7 @@ export default function HomeForm({ setToggleForm, history, match }) {
 
 		request.then(response => {
 			const data = response.data
-
+			console.log(data)
 			setFormData(data)
 			setLoadingData(false)
 		})
@@ -121,8 +129,9 @@ export default function HomeForm({ setToggleForm, history, match }) {
 	}
 
 	function list(params) {
-		const request = api.get(`${enviroment.apiURL[params.module]}${params.entityPath}?limit=1000`)
 		setLoadingData(true)
+		
+		const request = api.get(`${enviroment.apiURL[params.module]}${params.entityPath}?limit=1000`)
 
 		request.then(response => {
 			const data = response.data
@@ -149,7 +158,8 @@ export default function HomeForm({ setToggleForm, history, match }) {
 
 	function handleSelectData(input) {
 		let arr = []
-		dataListEntities && dataListEntities[input.dataSource.entityPath].map(item =>
+
+		dataListEntities[input.dataSource.entityPath] && dataListEntities[input.dataSource.entityPath].map(item =>
 			arr.push({
 				value: item[input.fieldKey.value],
 				label: (input.fieldKey.name).constructor.name === 'Array' ?
@@ -168,28 +178,54 @@ export default function HomeForm({ setToggleForm, history, match }) {
 	}
 	
 	function handleformDataValidated() {
-		settings.inputs.forEach(input => {
-			if(input.excludeBeforePost)
-				delete formData[input.name]
-			if(input.replace)
-				formData[input.name] = formData[input.name] && input.replace(formData[input.name])
-		})
+		try {
+			let amountTotal = 0
+			let valueAverage = 0
+
+			formData['bought'].forEach(item => {
+				amountTotal += Number(item.amount)
+				valueAverage += Number(item.value)
+			})
+
+			formData['amountTotal'] = amountTotal
+			formData['valueAverage'] = (valueAverage / formData['bought'].length).toFixed(2)
+			formData['startedPositionAt'] = formData['bought'][0].date
+		}catch(e) {
+			console.log(e)
+		}
 	}
 
-	function handleSubmitSingle(e) {
+	function handleSubmit(e) {
 		e.preventDefault()
 		setSubmitForm(true)
 
 		if(validated()) {
 			setSubmitForm(false)
-			formData['bought'].push(subformData)
 
-			// handleformDataValidated()
+			if(!moreThanOneOrder && !formData['_id'])
+				formData['bought'].push(subformData)
+
+			handleformDataValidated()
 
 			formData._id ?
 				update(formData)
 			:
 				save(formData)
+		}
+	}
+
+	function handleSubmitMultiple(e) {
+		e.preventDefault()
+		setSubmitForm(true)
+
+		if(validated()) {
+			setSubmitForm(false)
+			handleformDataValidated()
+
+			const bought = formData['bought']
+			bought.push(subformData)
+
+			setFormData(prevState=> ({...prevState, bought}))
 		}
 	}
 
@@ -209,19 +245,15 @@ export default function HomeForm({ setToggleForm, history, match }) {
 			isValid = false
 
 		for(let input in subformData) {
-			console.log(input)
 			if(subformData[input] === '' || subformData[input] === null || subformData[input].length === 0)
 				isValid = false
 		}
-
-		console.log(isValid)
-		console.log(subformData)
 
 		return isValid
 	}
 
     function selectValueConvert(input) {
-		let value = subformData[input.name]
+		let value = formData[input.name]
 
 		if(value || value === false) {
 			if(input.dataSource && dataListEntities[input.dataSource.entityPath]) {
@@ -267,38 +299,41 @@ export default function HomeForm({ setToggleForm, history, match }) {
 	}
 	
 	useEffect(() => {
-			if(match.params.query)
-				listUnique(match.params.query)
-			
-			list(assetObjFormat.dataSource)
+		if(match.params.query)
+			listUnique(match.params.query)
+		
+		list(assetObjFormat.dataSource)
 	}, [])
 
     return (
 		!loadingData ?
 			<form 
-				onSubmit={moreThanOneOrder ? {} : handleSubmitSingle}
+				onSubmit={moreThanOneOrder ? handleSubmitMultiple : handleSubmit}
 				className="homeForm"
 			>
 				<Row gutter={16}>
-					<Col span={6}>
-						<Label text={'More than one order?'}/>
-						<Select 
-							name={'moreThanOneOrder'}
-							classNamePrefix={'reactselect'}
-							value={moreThanOneOrder ? {label: 'Yes', value: true} : {label: 'No', value: false}}
-							onChange={e => setMoreThanOneOrder(e.value)}
-							options={[
-								{
-									label: 'Yes',
-									value: true
-								},
-								{
-									label: 'No',
-									value: false
-								}
-							]}
-						/>
-					</Col>
+					{!formData['_id'] &&
+						<Col span={4}>
+							<Label text={'More than one order?'}/>
+							<Select 
+								name={'moreThanOneOrder'}
+								classNamePrefix={'reactselect'}
+								value={moreThanOneOrder ? {label: 'Yes', value: true} : {label: 'No', value: false}}
+								isOptionDisabled={() => formData['bought']?.length > 0 ? true : false}
+								onChange={e => setMoreThanOneOrder(e.value)}
+								options={[
+									{
+										label: 'Yes',
+										value: true
+									},
+									{
+										label: 'No',
+										value: false
+									}
+								]}
+							/>
+						</Col>
+					}
 					<Col span={6}>
 						<Label text={'Asset'}/>
 						<Select 
@@ -306,6 +341,7 @@ export default function HomeForm({ setToggleForm, history, match }) {
 							placeholder='Select...'
 							classNamePrefix={'reactselect'}
 							value={selectValueConvert(assetObjFormat)}
+							isOptionDisabled={() => formData['bought']?.length > 0 ? true : false}
 							onChange={e => setFormData(prevState => ({...prevState, asset: e.value}))}
 							options={handleSelectData(assetObjFormat)}
 						/>
@@ -315,7 +351,7 @@ export default function HomeForm({ setToggleForm, history, match }) {
 					<Col span={4}>
 						<Label text={'Value'} />
 						<Input 
-							type="text"
+							type="number"
 							name={'value'}
 							required={true}
 							value={subformData['value'] || ''}
@@ -325,7 +361,7 @@ export default function HomeForm({ setToggleForm, history, match }) {
 					<Col span={4}>
 						<Label text={'Amount'} />
 						<Input 
-							type="text"
+							type="number"
 							name={'amount'}
 							required={true}
 							value={subformData['amount'] || ''}
@@ -340,14 +376,53 @@ export default function HomeForm({ setToggleForm, history, match }) {
 							onChange={date => setSubformData(prevState => ({...prevState, date}))}
 						/>
 					</Col>
-					{moreThanOneOrder &&
+					{(moreThanOneOrder || formData['_id']) &&
 						<Button 
+							className="homeForm__btnOrders"
 							title='+'
 							size='small'
-							onClick={e => {}}
+							onClick={handleSubmitMultiple}
 						/>
 					}
 				</Row>
+				{formData['bought']?.length > 0 &&
+					<div className="homeForm__table">
+						<table>
+							<thead>
+								<tr>
+									<th></th>
+									<th>
+										VALUE
+									</th>
+									<th>
+										AMOUNT
+									</th>
+									<th>
+										DATE
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								{formData['bought'].map((bought, index) => 
+									<tr key={index}>
+										<td>
+											<BsTrash onClick={() => {}}/>
+										</td>
+										<td>
+											{bought.value}
+										</td>
+										<td>
+											{bought.amount}
+										</td>
+										<td>
+											{format(addHours(new Date(bought.date), 3), 'dd/MM/yyyy HH:mm')}
+										</td>
+									</tr>
+								)}
+							</tbody>
+						</table>
+					</div>
+				}
 				<div className="homeForm__btnGroup">
 					{loadingActionRequest ?
 						<Button 
@@ -360,14 +435,14 @@ export default function HomeForm({ setToggleForm, history, match }) {
 						<Button 
 							title='Save'
 							size='small'
-							onClick={e => handleSubmitSingle(e)}
+							onClick={handleSubmit}
 						/>
 					}
 					<Button 
 						title='Cancel'
 						size='small'
 						link
-						onClick={() => clearRequest()}
+						onClick={clearRequest}
 					/>
 				</div>
 			</form>

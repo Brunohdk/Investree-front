@@ -101,9 +101,9 @@ const tableSettings = {
             data: 'valueAverage'
         },
         {
-            name: 'Started Position In',
-            data: 'startedPositionIn',
-            replace: obj => format(addHours(new Date(obj.startedPositionIn), 3), 'dd/MM/yyyy HH:mm')
+            name: 'Started Position At',
+            data: 'startedPositionAt',
+            replace: obj => format(addHours(new Date(obj.startedPositionAt), 3), 'dd/MM/yyyy HH:mm')
         },
         {
             name: 'createdAt',
