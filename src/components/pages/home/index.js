@@ -79,6 +79,7 @@ export default function HomeForm({ setToggleForm, history, match }) {
 	const [ loadingData, setLoadingData ] = useState(true)
 	const [ moreThanOneOrder, setMoreThanOneOrder ] = useState(false)
 	const [ loadingActionRequest, setLoadingActionRequest ] = useState(false)
+	const [ toggleBoughtSold, setToggleBoughtSold ] = useState(true)
 
     function save(data) {
 		setLoadingActionRequest(true)
@@ -117,13 +118,11 @@ export default function HomeForm({ setToggleForm, history, match }) {
 
 		request.then(response => {
 			const data = response.data
-			console.log(data)
 			setFormData(data)
 			setLoadingData(false)
 		})
 		.catch(error => {
 			// Notification('error', error)
-			console.log(error)
 			setLoadingData(false)
 		})
 	}
@@ -199,18 +198,21 @@ export default function HomeForm({ setToggleForm, history, match }) {
 		e.preventDefault()
 		setSubmitForm(true)
 
-		if(validated()) {
+		if(formData['_id']) {
 			setSubmitForm(false)
 
-			if(!moreThanOneOrder && !formData['_id'])
-				formData['bought'].push(subformData)
-
 			handleformDataValidated()
-
-			formData._id ?
-				update(formData)
-			:
+			update(formData)
+		} else {
+			if(validated()) {
+				setSubmitForm(false)
+	
+				if(!moreThanOneOrder && !formData['_id'])
+					formData['bought'].push(subformData)
+	
+				handleformDataValidated()
 				save(formData)
+			}
 		}
 	}
 
@@ -311,80 +313,143 @@ export default function HomeForm({ setToggleForm, history, match }) {
 				onSubmit={moreThanOneOrder ? handleSubmitMultiple : handleSubmit}
 				className="homeForm"
 			>
-				<Row gutter={16}>
-					{!formData['_id'] &&
-						<Col span={4}>
-							<Label text={'More than one order?'}/>
-							<Select 
-								name={'moreThanOneOrder'}
-								classNamePrefix={'reactselect'}
-								value={moreThanOneOrder ? {label: 'Yes', value: true} : {label: 'No', value: false}}
-								isOptionDisabled={() => formData['bought']?.length > 0 ? true : false}
-								onChange={e => setMoreThanOneOrder(e.value)}
-								options={[
-									{
-										label: 'Yes',
-										value: true
-									},
-									{
-										label: 'No',
-										value: false
-									}
-								]}
+				{formData['_id'] ? 
+					<>
+						<div className="homeForm__assetHeader">
+							<h3>
+								{formData.asset}
+							</h3>
+						</div>
+						<div className="homeForm__toggleActionWrapper">
+							<div className="homeForm__toggleActionWrapper--btn">
+								<Button 
+									title={'Compra'}
+									onClick={() => setToggleBoughtSold(prevState => !prevState)}	
+									className={toggleBoughtSold ? 'active' : 'notActive'}						
+								/>
+								<Button 
+									title={'Venda'}		
+									onClick={() => setToggleBoughtSold(prevState => !prevState)}							
+									className={toggleBoughtSold ? 'notActive' : 'active'}						
+								/>
+							</div>
+						</div>
+						<Row 
+							gutter={16}
+							justify='center'
+						>
+							<Col span={4}>
+								<Label text={'Value'} />
+								<Input 
+									type="number"
+									name={'value'}
+									required={true}
+									value={subformData['value'] || ''}
+									onChange={handleChange}
+								/>
+							</Col>
+							<Col span={4}>
+								<Label text={'Amount'} />
+								<Input 
+									type="number"
+									name={'amount'}
+									required={true}
+									value={subformData['amount'] || ''}
+									onChange={handleChange}
+								/>
+							</Col>
+							<Col span={4}>
+								<Label text={'Date'}/>
+								<DatePicker 
+									dateFormat='dd/MM/yyyy'
+									selected={new Date(subformData['date']) || ''}
+									onChange={date => setSubformData(prevState => ({...prevState, date}))}
+								/>
+							</Col>
+							<Button 
+								className="homeForm__btnOrders"
+								title='+'
+								size='small'
+								onClick={handleSubmitMultiple}
 							/>
-						</Col>
-					}
-					<Col span={6}>
-						<Label text={'Asset'}/>
-						<Select 
-							name={'asset'}
-							placeholder='Select...'
-							classNamePrefix={'reactselect'}
-							value={selectValueConvert(assetObjFormat)}
-							isOptionDisabled={() => formData['bought']?.length > 0 ? true : false}
-							onChange={e => setFormData(prevState => ({...prevState, asset: e.value}))}
-							options={handleSelectData(assetObjFormat)}
-						/>
-					</Col>
-				</Row>
-				<Row gutter={16}>
-					<Col span={4}>
-						<Label text={'Value'} />
-						<Input 
-							type="number"
-							name={'value'}
-							required={true}
-							value={subformData['value'] || ''}
-							onChange={handleChange}
-						/>
-					</Col>
-					<Col span={4}>
-						<Label text={'Amount'} />
-						<Input 
-							type="number"
-							name={'amount'}
-							required={true}
-							value={subformData['amount'] || ''}
-							onChange={handleChange}
-						/>
-					</Col>
-					<Col span={4}>
-						<Label text={'Date'}/>
-						<DatePicker 
-							dateFormat='dd/MM/yyyy'
-							selected={new Date(subformData['date']) || ''}
-							onChange={date => setSubformData(prevState => ({...prevState, date}))}
-						/>
-					</Col>
-					{(moreThanOneOrder || formData['_id']) &&
-						<Button 
-							className="homeForm__btnOrders"
-							title='+'
-							size='small'
-							onClick={handleSubmitMultiple}
-						/>
-					}
-				</Row>
+						</Row>
+					</>
+				:
+					<>
+						<Row gutter={16}>
+							<Col span={4}>
+								<Label text={'More than one order?'}/>
+								<Select 
+									name={'moreThanOneOrder'}
+									classNamePrefix={'reactselect'}
+									value={moreThanOneOrder ? {label: 'Yes', value: true} : {label: 'No', value: false}}
+									isOptionDisabled={() => formData['bought']?.length > 0 ? true : false}
+									onChange={e => setMoreThanOneOrder(e.value)}
+									options={[
+										{
+											label: 'Yes',
+											value: true
+										},
+										{
+											label: 'No',
+											value: false
+										}
+									]}
+								/>
+							</Col>
+							<Col span={6}>
+								<Label text={'Asset'}/>
+								<Select 
+									name={'asset'}
+									placeholder='Select...'
+									classNamePrefix={'reactselect'}
+									value={selectValueConvert(assetObjFormat)}
+									isOptionDisabled={() => formData['bought']?.length > 0 ? true : false}
+									onChange={e => setFormData(prevState => ({...prevState, asset: e.value}))}
+									options={handleSelectData(assetObjFormat)}
+								/>
+							</Col>
+						</Row>
+						<Row gutter={16}>
+							<Col span={4}>
+								<Label text={'Value'} />
+								<Input 
+									type="number"
+									name={'value'}
+									required={true}
+									value={subformData['value'] || ''}
+									onChange={handleChange}
+								/>
+							</Col>
+							<Col span={4}>
+								<Label text={'Amount'} />
+								<Input 
+									type="number"
+									name={'amount'}
+									required={true}
+									value={subformData['amount'] || ''}
+									onChange={handleChange}
+								/>
+							</Col>
+							<Col span={4}>
+								<Label text={'Date'}/>
+								<DatePicker 
+									dateFormat='dd/MM/yyyy'
+									selected={new Date(subformData['date']) || ''}
+									onChange={date => setSubformData(prevState => ({...prevState, date}))}
+								/>
+							</Col>
+							{moreThanOneOrder &&
+								<Button 
+									className="homeForm__btnOrders"
+									title='+'
+									size='small'
+									onClick={handleSubmitMultiple}
+								/>
+							}
+						</Row>
+					</>
+				}
 				{formData['bought']?.length > 0 &&
 					<div className="homeForm__table">
 						<table>
@@ -406,7 +471,10 @@ export default function HomeForm({ setToggleForm, history, match }) {
 								{formData['bought'].map((bought, index) => 
 									<tr key={index}>
 										<td>
-											<BsTrash onClick={() => {}}/>
+											<BsTrash onClick={() => {
+												let newBoughtArr = formData['bought'].filter(item => item._id !== bought._id)
+												setFormData(prevState => ({...prevState, bought: newBoughtArr}))
+											}}/>
 										</td>
 										<td>
 											{bought.value}
