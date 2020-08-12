@@ -9,7 +9,7 @@
     border-radius: 5px;
     background-color: $color-system-medium;
     color: $text-color-white;
-
+    cursor: pointer;
 
     span {
         display: flex;
@@ -29,7 +29,9 @@
     }
 
     &:hover {
-        cursor: pointer;
+        background-color: $color-system-light;
+        border-color: $color-system-light;
+        transition: all 0.3s ease-in-out;
     }
 
     &:focus {
@@ -64,7 +66,8 @@
 
         &:hover {
             opacity: 0.7;
-            transition: all 0.3s ease-in-out;
+            background-color: transparent;
+            border: none;
         }
     }
     
