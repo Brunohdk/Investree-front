@@ -199,35 +199,37 @@ export default function HomeForm({ setToggleForm, history, match }) {
 		setSubmitForm(true)
 
 		if(formData['_id']) {
-			setSubmitForm(false)
-
 			handleformDataValidated()
 			update(formData)
+			setSubmitForm(false)
 		} else {
 			if(validated()) {
-				setSubmitForm(false)
-	
 				if(!moreThanOneOrder && !formData['_id'])
 					formData['bought'].push(subformData)
 	
 				handleformDataValidated()
 				save(formData)
+				setFormData(formDefaultValue)
+				setSubmitForm(false)
 			}
 		}
 	}
 
 	function handleSubmitMultiple(e) {
 		e.preventDefault()
-		setSubmitForm(true)
 
 		if(validated()) {
-			setSubmitForm(false)
-			handleformDataValidated()
+			if(toggleBoughtSold) {
+				const bought = formData['bought']
+				bought.push(subformData)
 
-			const bought = formData['bought']
-			bought.push(subformData)
+				setFormData(prevState=> ({...prevState, bought}))
+			} else {
+				const sold = formData['sold']
+				sold.push(subformData)
 
-			setFormData(prevState=> ({...prevState, bought}))
+				setFormData(prevState=> ({...prevState, sold}))
+			}
 		}
 	}
 
@@ -309,45 +311,32 @@ export default function HomeForm({ setToggleForm, history, match }) {
 
     return (
 		!loadingData ?
-			<form 
-				onSubmit={moreThanOneOrder ? handleSubmitMultiple : handleSubmit}
-				className="homeForm"
-			>
-				{formData['_id'] ? 
-					<>
-						<div className="homeForm__assetHeader">
-							<h3>
-								{formData.asset}
-							</h3>
+			formData['_id'] ?
+				<>
+					<div className="homeForm__assetHeader">
+						<h3>
+							{formData.asset}
+						</h3>
+					</div>
+					<div className="homeForm__toggleActionWrapper">
+						<div className="homeForm__toggleActionWrapper--btn">
+							<Button 
+								title={'Compra'}
+								onClick={() => setToggleBoughtSold(prevState => !prevState)}	
+								className={toggleBoughtSold ? 'active' : 'notActive'}						
+							/>
+							<Button 
+								title={'Venda'}		
+								onClick={() => setToggleBoughtSold(prevState => !prevState)}							
+								className={toggleBoughtSold ? 'notActive' : 'active'}						
+							/>
 						</div>
-						<div className="homeForm__toggleActionWrapper">
-							<div className="homeForm__toggleActionWrapper--btn">
-								<Button 
-									title={'Compra'}
-									onClick={() => setToggleBoughtSold(prevState => !prevState)}	
-									className={toggleBoughtSold ? 'active' : 'notActive'}						
-								/>
-								<Button 
-									title={'Venda'}		
-									onClick={() => setToggleBoughtSold(prevState => !prevState)}							
-									className={toggleBoughtSold ? 'notActive' : 'active'}						
-								/>
-							</div>
-						</div>
+					</div>
+					<form className="homeForm">
 						<Row 
 							gutter={16}
 							justify='center'
 						>
-							<Col span={4}>
-								<Label text={'Value'} />
-								<Input 
-									type="number"
-									name={'value'}
-									required={true}
-									value={subformData['value'] || ''}
-									onChange={handleChange}
-								/>
-							</Col>
 							<Col span={4}>
 								<Label text={'Amount'} />
 								<Input 
@@ -355,6 +344,16 @@ export default function HomeForm({ setToggleForm, history, match }) {
 									name={'amount'}
 									required={true}
 									value={subformData['amount'] || ''}
+									onChange={handleChange}
+								/>
+							</Col>
+							<Col span={4}>
+								<Label text={'Value'} />
+								<Input 
+									type="number"
+									name={'value'}
+									required={true}
+									value={subformData['value'] || ''}
 									onChange={handleChange}
 								/>
 							</Col>
@@ -373,9 +372,127 @@ export default function HomeForm({ setToggleForm, history, match }) {
 								onClick={handleSubmitMultiple}
 							/>
 						</Row>
-					</>
-				:
-					<>
+					</form>
+					<div className="homeForm__tableGroup">
+						{formData['bought'].length > 0 &&
+							<div className="homeForm__tableGroup--table">
+								<div>
+									<h4>
+										BOUGHT
+									</h4>
+								</div>
+								<table>
+									<thead>
+										<tr>
+											<th></th>
+											<th>
+												VALUE
+											</th>
+											<th>
+												AMOUNT
+											</th>
+											<th>
+												DATE
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{formData['bought'].map((bought, index) => 
+											<tr key={index}>
+												<td>
+													<BsTrash onClick={() => {
+														let newBoughtArr = formData['bought'].filter(item => item._id !== bought._id)
+														setFormData(prevState => ({...prevState, bought: newBoughtArr}))
+													}}/>
+												</td>
+												<td>
+													{bought.value}
+												</td>
+												<td>
+													{bought.amount}
+												</td>
+												<td>
+													{format(addHours(new Date(bought.date), 3), 'dd/MM/yyyy HH:mm')}
+												</td>
+											</tr>
+										)}
+									</tbody>
+								</table>
+							</div>
+						}
+						{formData['sold'].length > 0 && 
+							<div className="homeForm__tableGroup--table">
+								<div>
+									<h4>
+										SOLD
+									</h4>
+								</div>
+								<table>
+									<thead>
+										<tr>
+											<th></th>
+											<th>
+												VALUE
+											</th>
+											<th>
+												AMOUNT
+											</th>
+											<th>
+												DATE
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{formData['sold'].map((sold, index) => 
+											<tr key={index}>
+												<td>
+													<BsTrash onClick={() => {
+														let newSoldArr = formData['sold'].filter(item => item._id !== sold._id)
+														setFormData(prevState => ({...prevState, sold: newSoldArr}))
+													}}/>
+												</td>
+												<td>
+													{sold.value}
+												</td>
+												<td>
+													{sold.amount}
+												</td>
+												<td>
+													{format(addHours(new Date(sold.date), 3), 'dd/MM/yyyy HH:mm')}
+												</td>
+											</tr>
+										)}
+									</tbody>
+								</table>
+							</div>
+						}
+					</div>
+					<div className="homeForm__btnGroup">
+						{loadingActionRequest ?
+							<Button 
+								className="homeForm__btnGroup--loadingBtn"
+								disabled
+								outline
+								icon={() => <Spin /> }
+							/>
+						:
+							<Button 
+								title='Save'
+								size='small'
+								onClick={handleSubmit}
+							/>
+						}
+						<Button 
+							title='Cancel'
+							size='small'
+							link
+							onClick={clearRequest}
+						/>
+					</div>
+				</>
+			:
+				<>
+					<form className="homeForm">
 						<Row gutter={16}>
 							<Col span={4}>
 								<Label text={'More than one order?'}/>
@@ -404,7 +521,6 @@ export default function HomeForm({ setToggleForm, history, match }) {
 									placeholder='Select...'
 									classNamePrefix={'reactselect'}
 									value={selectValueConvert(assetObjFormat)}
-									isOptionDisabled={() => formData['bought']?.length > 0 ? true : false}
 									onChange={e => setFormData(prevState => ({...prevState, asset: e.value}))}
 									options={handleSelectData(assetObjFormat)}
 								/>
@@ -412,22 +528,22 @@ export default function HomeForm({ setToggleForm, history, match }) {
 						</Row>
 						<Row gutter={16}>
 							<Col span={4}>
-								<Label text={'Value'} />
-								<Input 
-									type="number"
-									name={'value'}
-									required={true}
-									value={subformData['value'] || ''}
-									onChange={handleChange}
-								/>
-							</Col>
-							<Col span={4}>
 								<Label text={'Amount'} />
 								<Input 
 									type="number"
 									name={'amount'}
 									required={true}
 									value={subformData['amount'] || ''}
+									onChange={handleChange}
+								/>
+							</Col>
+							<Col span={4}>
+								<Label text={'Value'} />
+								<Input 
+									type="number"
+									name={'value'}
+									required={true}
+									value={subformData['value'] || ''}
 									onChange={handleChange}
 								/>
 							</Col>
@@ -448,72 +564,30 @@ export default function HomeForm({ setToggleForm, history, match }) {
 								/>
 							}
 						</Row>
-					</>
-				}
-				{formData['bought']?.length > 0 &&
-					<div className="homeForm__table">
-						<table>
-							<thead>
-								<tr>
-									<th></th>
-									<th>
-										VALUE
-									</th>
-									<th>
-										AMOUNT
-									</th>
-									<th>
-										DATE
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{formData['bought'].map((bought, index) => 
-									<tr key={index}>
-										<td>
-											<BsTrash onClick={() => {
-												let newBoughtArr = formData['bought'].filter(item => item._id !== bought._id)
-												setFormData(prevState => ({...prevState, bought: newBoughtArr}))
-											}}/>
-										</td>
-										<td>
-											{bought.value}
-										</td>
-										<td>
-											{bought.amount}
-										</td>
-										<td>
-											{format(addHours(new Date(bought.date), 3), 'dd/MM/yyyy HH:mm')}
-										</td>
-									</tr>
-								)}
-							</tbody>
-						</table>
-					</div>
-				}
-				<div className="homeForm__btnGroup">
-					{loadingActionRequest ?
+					</form>
+					<div className="homeForm__btnGroup">
+						{loadingActionRequest ?
+							<Button 
+								className="homeForm__btnGroup--loadingBtn"
+								disabled
+								outline
+								icon={() => <Spin /> }
+							/>
+						:
+							<Button 
+								title='Save'
+								size='small'
+								onClick={handleSubmit}
+							/>
+						}
 						<Button 
-							className="homeForm__btnGroup--loadingBtn"
-							disabled
-							outline
-							icon={() => <Spin /> }
-						/>
-					:
-						<Button 
-							title='Save'
+							title='Cancel'
 							size='small'
-							onClick={handleSubmit}
+							link
+							onClick={clearRequest}
 						/>
-					}
-					<Button 
-						title='Cancel'
-						size='small'
-						link
-						onClick={clearRequest}
-					/>
-				</div>
-			</form>
+					</div>
+				</>
 		:
 			<div className="l">
 				LOADING

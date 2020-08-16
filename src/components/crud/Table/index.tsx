@@ -44,6 +44,19 @@ export default function CrudTable({ settings, history, match }: {settings:TableS
 			console.log(error)
 		})
     }
+
+    function remove(id: string) {
+		const request = api.delete(`${enviroment.apiURL[settings.module]}${settings.entityPath}/${id}`)
+
+        request.then(response => {
+            setLoading(false)
+            list()
+		})
+		.catch(error => {
+			setLoading(false)
+			console.log(error)
+		})
+    }
     
     useEffect(() => {
 		if(window.location.search) {
@@ -88,10 +101,13 @@ export default function CrudTable({ settings, history, match }: {settings:TableS
                                             <BsTrash 
                                                 className="crudTable__icons"
                                                 size={16}
+                                                onClick={() => remove(row['_id'])}
                                             />
                                     :
                                         <BsTrash 
+                                            className="crudTable__icons"
                                             size={16}
+                                            onClick={() => remove(row['_id'])}
                                         />
                                     }
                                 </td>
