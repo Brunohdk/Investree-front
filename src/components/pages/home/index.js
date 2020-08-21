@@ -204,12 +204,13 @@ export default function HomeForm({ setToggleForm, history, match }) {
 			setSubmitForm(false)
 		} else {
 			if(validated()) {
-				if(!moreThanOneOrder && !formData['_id'])
+				if(!moreThanOneOrder && !formData['_id']) {
+					formData['bought'] = []
 					formData['bought'].push(subformData)
+				}
 	
 				handleformDataValidated()
 				save(formData)
-				setFormData(formDefaultValue)
 				setSubmitForm(false)
 			}
 		}
@@ -298,7 +299,8 @@ export default function HomeForm({ setToggleForm, history, match }) {
 
     function clearRequest() {
         setToggleForm(false)
-        setFormData(formDefaultValue)
+		setFormData(formDefaultValue)
+		setSubformData(subformDefaultValue)
         history.push('/')
 	}
 	
@@ -308,6 +310,10 @@ export default function HomeForm({ setToggleForm, history, match }) {
 		
 		list(assetObjFormat.dataSource)
 	}, [])
+
+	useEffect(() => {
+		console.log(formData)
+	}, [formData])
 
     return (
 		!loadingData ?
